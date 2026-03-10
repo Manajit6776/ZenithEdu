@@ -269,7 +269,7 @@ export const Hostel: React.FC = () => {
           {user?.role === 'Admin' && (
             <button
               onClick={handleAssignRoom}
-              className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg font-medium transition-all shadow-lg shadow-indigo-900/20 hover:shadow-xl hover:shadow-indigo-900/30 transform hover:scale-105 flex items-center gap-2"
+              className="px-6 py-3 bg-rose-600 hover:bg-rose-700 dark:bg-gradient-to-r dark:from-indigo-600 dark:to-purple-600 dark:hover:from-indigo-500 dark:hover:to-purple-500 text-white rounded-lg font-medium transition-all shadow-lg shadow-rose-600/10 dark:shadow-indigo-900/20 hover:shadow-xl hover:shadow-rose-600/20 dark:hover:shadow-indigo-900/30 transform hover:scale-105 flex items-center gap-2"
             >
               <Plus className="w-5 h-5" />
               Assign Room
@@ -931,7 +931,7 @@ export const Hostel: React.FC = () => {
                   <button
                     onClick={handleAllocateRoom}
                     disabled={!selectedRoom || !selectedStudent}
-                    className="flex-1 px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-500 hover:to-purple-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="flex-1 px-4 py-3 bg-rose-600 hover:bg-rose-700 dark:bg-gradient-to-r dark:from-indigo-600 dark:to-purple-600 dark:hover:from-indigo-500 dark:hover:to-purple-500 text-white rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     <Key className="w-4 h-4" />
                     Assign Room
