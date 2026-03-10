@@ -59,16 +59,16 @@ const TIMELINE_END_HOUR = 21;  // 9 PM
 
 // ─── Color + Icon System ───────────────────────────────────────────────────
 const TYPE_CONFIG: Record<string, {
-  bg: string; text: string; border: string; accent: string; solidBg: string;
-  barColor: string; icon: React.ElementType; label: string;
+  bg: string; text: string; border: string; accent: string; shadow: string;
+  icon: React.ElementType; label: string;
 }> = {
-  'Lecture':    { bg: 'bg-rose-500/10',   text: 'text-rose-700 dark:text-indigo-400',   border: 'border-rose-200 dark:border-indigo-500/20',   accent: 'bg-rose-500',   solidBg: 'bg-rose-500/20',   barColor: '#e11d48', icon: BookOpen,       label: 'Lecture'    },
-  'Lab':        { bg: 'bg-amber-500/10', text: 'text-amber-800 dark:text-amber-400', border: 'border-amber-200 dark:border-indigo-500/20', accent: 'bg-amber-500', solidBg: 'bg-amber-500/20', barColor: '#d97706', icon: FlaskConical,   label: 'Lab'        },
-  'Self Study': { bg: 'bg-rose-400/10',  text: 'text-rose-600 dark:text-slate-300',  border: 'border-rose-100 dark:border-white/5',  accent: 'bg-rose-400',  solidBg: 'bg-rose-400/20',  barColor: '#fb7185', icon: Coffee,         label: 'Self Study' },
-  'Review':     { bg: 'bg-blue-500/10',  text: 'text-blue-700 dark:text-slate-300',  border: 'border-blue-200 dark:border-indigo-500/20',  accent: 'bg-blue-500',  solidBg: 'bg-blue-500/20',  barColor: '#3b82f6', icon: ClipboardCheck, label: 'Review'     },
-  'Activity':   { bg: 'bg-pink-500/10',   text: 'text-pink-700 dark:text-pink-400',   border: 'border-pink-200 dark:border-pink-500/20',   accent: 'bg-pink-500',   solidBg: 'bg-pink-500/20',   barColor: '#db2777', icon: Zap,            label: 'Activity'   },
+  'Lecture':    { bg: 'bg-indigo-50 dark:bg-indigo-500/10', text: 'text-indigo-700 dark:text-indigo-300', border: 'border-indigo-100 dark:border-indigo-500/20', accent: 'bg-indigo-500', shadow: 'shadow-indigo-200 dark:shadow-indigo-900/40', icon: BookOpen, label: 'Lecture' },
+  'Lab':        { bg: 'bg-emerald-50 dark:bg-emerald-500/10', text: 'text-emerald-700 dark:text-emerald-300', border: 'border-emerald-100 dark:border-emerald-500/20', accent: 'bg-emerald-500', shadow: 'shadow-emerald-200 dark:shadow-emerald-900/40', icon: FlaskConical, label: 'Lab' },
+  'Self Study': { bg: 'bg-amber-50 dark:bg-amber-500/10', text: 'text-amber-700 dark:text-amber-300', border: 'border-amber-100 dark:border-amber-500/20', accent: 'bg-amber-500', shadow: 'shadow-amber-200 dark:shadow-amber-900/40', icon: Coffee, label: 'Self Study' },
+  'Review':     { bg: 'bg-sky-50 dark:bg-sky-500/10', text: 'text-sky-700 dark:text-sky-300', border: 'border-sky-100 dark:border-sky-500/20', accent: 'bg-sky-500', shadow: 'shadow-sky-200 dark:shadow-sky-900/40', icon: ClipboardCheck, label: 'Review' },
+  'Activity':   { bg: 'bg-rose-50 dark:bg-rose-500/10', text: 'text-rose-700 dark:text-rose-300', border: 'border-rose-100 dark:border-rose-500/20', accent: 'bg-rose-500', shadow: 'shadow-rose-200 dark:shadow-rose-900/40', icon: Zap, label: 'Activity' },
 };
-const getType = (type: string) => TYPE_CONFIG[type] ?? { bg: 'bg-rose-50 dark:bg-slate-900', text: 'text-rose-900 dark:text-indigo-400', border: 'border-rose-200 dark:border-indigo-500/20', accent: 'bg-rose-500 dark:bg-indigo-600', solidBg: 'bg-rose-100 dark:bg-indigo-900/20', barColor: '#9f1239', icon: Calendar, label: type };
+const getType = (type: string) => TYPE_CONFIG[type] ?? { bg: 'bg-slate-50 dark:bg-slate-800', text: 'text-slate-700 dark:text-slate-300', border: 'border-slate-200 dark:border-slate-700', accent: 'bg-slate-500', shadow: 'shadow-slate-200', icon: Calendar, label: type };
 
 // ─── Utilities ─────────────────────────────────────────────────────────────
 const handleApiError = (error: unknown): ApiError => {
@@ -123,25 +123,24 @@ const TypeBadge: React.FC<{ type: string; size?: 'sm' | 'md' }> = ({ type, size 
   const cfg = getType(type);
   const Icon = cfg.icon;
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-xl border font-black uppercase tracking-widest shadow-sm ${cfg.bg} ${cfg.text} ${cfg.border} ${size === 'sm' ? 'px-2.5 py-1 text-[9px]' : 'px-4 py-1.5 text-[11px]'}`}>
+    <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-bold tracking-tight shadow-sm ${cfg.bg} ${cfg.text} ${cfg.border} ${size === 'sm' ? 'text-[10px]' : 'text-xs'}`}>
       <Icon className={size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'} />
       {type}
     </span>
   );
 };
 
-// ─── EnrollmentBar ──────────────────────────────────────────────────────────
 const EnrollmentBar: React.FC<{ current: number; max: number }> = ({ current, max }) => {
   const pct = Math.min((current / max) * 100, 100);
   const full = current >= max;
   return (
-     <div className="space-y-1.5">
-      <div className="flex justify-between text-[9px] font-black uppercase tracking-widest">
-        <span className="text-rose-400 dark:text-slate-700">Utilization Stream</span>
-        <span className={full ? 'text-rose-600 dark:text-indigo-400 animate-pulse' : 'text-rose-800 dark:text-slate-500'}>{current}/{max}{full && ' · Saturated'}</span>
+    <div className="space-y-1.5">
+      <div className="flex justify-between text-[10px] font-bold tracking-tight">
+        <span className="text-slate-500 dark:text-slate-400">Class Utilization</span>
+        <span className={full ? 'text-rose-500 animate-pulse' : 'text-slate-700 dark:text-slate-300'}>{current}/{max} Students</span>
       </div>
-      <div className="h-2 bg-rose-500/5 dark:bg-white/[0.02] rounded-full overflow-hidden border border-rose-500/10 dark:border-white/5 backdrop-blur-md">
-        <div className={`h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(225,29,72,0.4)] ${full ? 'bg-rose-600 dark:bg-indigo-600' : pct > 80 ? 'bg-rose-500 dark:bg-pink-500' : 'bg-rose-400 dark:bg-indigo-500'}`} style={{ width: `${pct}%` }} />
+      <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
+        <div className={`h-full rounded-full transition-all duration-1000 ease-out ${full ? 'bg-rose-500' : pct > 80 ? 'bg-amber-500' : 'bg-indigo-500'}`} style={{ width: `${pct}%` }} />
       </div>
     </div>
   );
@@ -171,83 +170,71 @@ const TimetableCard: React.FC<{
 
   return (
     <div
-      className={`relative rounded-[2.5rem] border p-1 group transition-all duration-500 cursor-pointer shadow-xl shadow-rose-200/5 ${isPending ? 'opacity-50 pointer-events-none' : ''} bg-amber-50/40 dark:bg-slate-900/40 border-rose-100 dark:border-white/5 hover:border-rose-300 dark:hover:border-indigo-500/50 backdrop-blur-xl hover:-translate-y-2 hover:shadow-2xl hover:shadow-rose-300/20 dark:hover:shadow-blue-500/10`}
+      className={`relative rounded-[2rem] border p-6 group transition-all duration-300 cursor-pointer ${isPending ? 'opacity-50 pointer-events-none' : ''} bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border-slate-200/60 dark:border-slate-800/60 hover:border-rose-500/50 dark:hover:border-indigo-500/50 hover:shadow-2xl hover:shadow-rose-500/10 dark:hover:shadow-indigo-500/10 hover:-translate-y-1.5 shadow-xl shadow-slate-200/40 dark:shadow-none`}
       onClick={() => onView(entry)}
     >
-       <div className="absolute top-4 right-4 z-10">
-        <span className="px-3 py-1 rounded-xl bg-white/40 dark:bg-indigo-500/10 border border-rose-100 dark:border-indigo-500/20 text-[10px] font-black text-rose-800 dark:text-indigo-400 tabular-nums uppercase tracking-widest shadow-sm backdrop-blur-md">
-          {formatTime(entry.time)}
-        </span>
-      </div>
-
-      {isPending && (
-        <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/30 rounded-xl">
-          <Loader2 className="w-5 h-5 animate-spin text-blue-400" />
-        </div>
-      )}
-
-      <div className="p-5">
-        <div className="flex items-start justify-between mb-4">
-          <TypeBadge type={entry.type} />
+      <div className="flex items-start justify-between mb-5">
+        <TypeBadge type={entry.type} />
+        <div className="flex items-center gap-2">
+          <span className="px-2 py-0.5 rounded-lg bg-slate-50 dark:bg-slate-800 text-[10px] font-bold text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-slate-700 tabular-nums">
+            {formatTime(entry.time)}
+          </span>
           <div className="relative" ref={actionsRef} onClick={e => e.stopPropagation()}>
             <button
               onClick={() => setShowActions(!showActions)}
-              className="p-2 rounded-xl bg-rose-100 dark:bg-white/5 text-rose-600 dark:text-slate-500 hover:text-rose-800 dark:hover:text-white transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-indigo-600 hover:bg-rose-50 dark:hover:bg-slate-800 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
             >
               <MoreVertical className="w-4 h-4" />
             </button>
             {showActions && (
-              <div className="absolute right-0 top-full mt-2 w-56 rounded-[1.5rem] bg-white/90 dark:bg-slate-900/90 border border-rose-100 dark:border-indigo-500/20 shadow-2xl z-30 backdrop-blur-2xl p-2 animate-in zoom-in-95 duration-200">
-                <div className="space-y-1">
-                  <button onClick={() => { onView(entry); setShowActions(false); }} className="w-full px-4 py-3 text-left text-[10px] font-black text-rose-950 dark:text-slate-300 hover:bg-rose-500/10 dark:hover:bg-indigo-500/10 flex items-center gap-3 transition-all rounded-xl uppercase tracking-widest group/item">
-                    <Info className="w-4 h-4 text-rose-500 dark:text-indigo-400 group-hover/item:scale-110 transition-transform" /> View Details
-                  </button>
-                  {(isTeacher() || isAdmin()) && (
-                    <>
-                      <button onClick={() => { onEdit(entry); setShowActions(false); }} className="w-full px-4 py-3 text-left text-[10px] font-black text-rose-950 dark:text-slate-300 hover:bg-rose-500/10 dark:hover:bg-indigo-500/10 flex items-center gap-3 transition-all rounded-xl uppercase tracking-widest group/item">
-                        <Edit className="w-4 h-4 text-rose-500 dark:text-indigo-400 group-hover/item:scale-110 transition-transform" /> Edit Class
-                      </button>
-                      <div className="mx-2 my-2 border-t border-rose-100 dark:border-white/5" />
-                      <button onClick={() => { onDelete(entry); setShowActions(false); }} className="w-full px-4 py-3 text-left text-[10px] font-black text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 flex items-center gap-3 transition-all rounded-xl uppercase tracking-widest group/item">
-                        <Trash2 className="w-4 h-4 group-hover/item:scale-110 transition-transform" /> Delete Class
-                      </button>
-                    </>
-                  )}
-                </div>
+              <div className="absolute right-0 top-full mt-2 w-48 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-2xl z-30 p-1.5 animate-in fade-in zoom-in duration-200">
+                <button onClick={() => { onView(entry); setShowActions(false); }} className="w-full px-3 py-2.5 text-left text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-600 rounded-xl flex items-center gap-3 transition-all">
+                  <Info className="w-4 h-4 text-indigo-500" /> View Details
+                </button>
+                {(isTeacher() || isAdmin()) && (
+                  <>
+                    <button onClick={() => { onEdit(entry); setShowActions(false); }} className="w-full px-3 py-2.5 text-left text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-600 rounded-xl flex items-center gap-3 transition-all">
+                      <Edit className="w-4 h-4 text-indigo-500" /> Edit Session
+                    </button>
+                    <div className="my-1 border-t border-slate-100 dark:border-slate-700" />
+                    <button onClick={() => { onDelete(entry); setShowActions(false); }} className="w-full px-3 py-2.5 text-left text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl flex items-center gap-3 transition-all">
+                      <Trash2 className="w-4 h-4" /> Delete Session
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </div>
         </div>
+      </div>
 
-        <h3 className="text-lg font-black text-rose-950 dark:text-slate-300 mb-4 uppercase tracking-tight group-hover:text-rose-600 dark:group-hover:text-blue-400 transition-colors pr-12 leading-tight">{entry.subject}</h3>
+      <h3 className="text-lg font-bold text-rose-950 dark:text-slate-100 mb-4 leading-tight group-hover:text-rose-600 dark:group-hover:text-indigo-400 transition-colors uppercase tracking-tight">{entry.subject}</h3>
 
-         <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="flex items-center gap-2 text-[9px] font-black text-rose-700/60 dark:text-slate-600 uppercase tracking-widest">
-            <Clock className="w-4 h-4 text-rose-400 dark:text-slate-700 flex-shrink-0" />
-            <span className="tabular-nums">{entry.time}</span>
+      <div className="grid grid-cols-1 gap-2.5 mb-5">
+        <div className="flex items-center gap-3 text-xs font-semibold text-rose-900/60 dark:text-slate-400">
+          <div className="w-8 h-8 rounded-xl bg-rose-50 dark:bg-slate-800/80 flex items-center justify-center border border-rose-100/50 dark:border-slate-700">
+            <MapPin className="w-3.5 h-3.5 text-rose-400 dark:text-slate-500" />
           </div>
-          <div className="flex items-center gap-2 text-[9px] font-black text-rose-700/60 dark:text-slate-600 uppercase tracking-widest">
-            <MapPin className="w-4 h-4 text-rose-400 dark:text-slate-700 flex-shrink-0" />
-            <span className="truncate">{entry.room}</span>
-          </div>
-          {entry.instructor && (
-            <div className="flex items-center gap-2 text-[9px] font-black text-rose-700/60 dark:text-slate-600 uppercase tracking-widest col-span-2">
-            <User className="w-4 h-4 text-rose-400 dark:text-slate-700 flex-shrink-0" />
-            <span className="truncate">{entry.instructor}</span>
-          </div>
-          )}
+          <span className="truncate">{entry.room}</span>
         </div>
-
-        {entry.maxCapacity && entry.currentEnrollment !== undefined && (
-          <div className="mt-4 pt-4 border-t border-rose-100/50 dark:border-white/5">
-            <EnrollmentBar current={entry.currentEnrollment} max={entry.maxCapacity} />
+        {entry.instructor && (
+          <div className="flex items-center gap-3 text-xs font-semibold text-rose-900/60 dark:text-slate-400">
+            <div className="w-8 h-8 rounded-xl bg-rose-50 dark:bg-slate-800/80 flex items-center justify-center border border-rose-100/50 dark:border-slate-700">
+              <User className="w-3.5 h-3.5 text-rose-400 dark:text-slate-500" />
+            </div>
+            <span className="truncate">{entry.instructor}</span>
           </div>
         )}
       </div>
+
+      {entry.maxCapacity && entry.currentEnrollment !== undefined && (
+        <div className="mt-4 pt-4 border-t border-slate-50 dark:border-slate-800">
+          <EnrollmentBar current={entry.currentEnrollment} max={entry.maxCapacity} />
+        </div>
+      )}
     </div>
   );
 };
-
 // ─── Timeline Block ─────────────────────────────────────────────────────────
 const TimelineBlock: React.FC<{
   key?: React.Key;
@@ -261,32 +248,26 @@ const TimelineBlock: React.FC<{
   const top = Math.max((startMinutes / 60) * TIMELINE_HOUR_PX, 0);
   const height = Math.max((duration / 60) * TIMELINE_HOUR_PX - 2, 24);
   
-  // Format time range
-  const endTimeMinutes = timeToMinutes(entry.time) + duration;
-  const endTimeHours = Math.floor(endTimeMinutes / 60);
-  const endTimeMins = endTimeMinutes % 60;
-  const endTimeStr = `${String(endTimeHours).padStart(2, '0')}:${String(endTimeMins).padStart(2, '0')}`;
-
   return (
     <div
-      className={`absolute left-1 right-1 rounded-2xl border-2 cursor-pointer hover:z-30 hover:scale-[1.02] hover:shadow-2xl transition-all duration-300 ${cfg.solidBg} ${cfg.border} overflow-hidden shadow-xl shadow-rose-900/5 backdrop-blur-md ${isPending ? 'opacity-50' : ''}`}
-      style={{ top: `${top}px`, height: `${height}px`, minHeight: '32px' }}
+      className={`absolute left-1 right-1 rounded-xl border-l-4 cursor-pointer hover:z-30 hover:shadow-xl transition-all duration-300 ${cfg.bg} ${cfg.border} overflow-hidden ${isPending ? 'opacity-50' : ''}`}
+      style={{ top: `${top}px`, height: `${height}px`, minHeight: '32px', borderLeftColor: cfg.accent }}
       onClick={() => onView(entry)}
-      title={`${entry.subject} · ${entry.time}-${endTimeStr}`}
+      title={`${entry.subject} · ${entry.time}`}
     >
-      <div className={`absolute left-0 top-0 bottom-0 w-2 ${cfg.accent} shadow-[0_0_15px_rgba(225,29,72,0.4)]`} />
-      <div className="pl-4 pr-3 py-2 h-full flex flex-col justify-center gap-1">
-        <p className="text-[11px] font-black text-rose-950 dark:text-slate-200 leading-tight uppercase tracking-[0.1em] truncate">{entry.subject}</p>
-        <div className="flex items-center gap-2.5">
-          <span className={`text-[9px] font-black ${cfg.text} tabular-nums uppercase tracking-widest`}>{entry.time}</span>
+      <div className="px-3 py-2 h-full flex flex-col justify-start overflow-hidden">
+        <p className={`text-[10px] font-bold ${cfg.text} truncate uppercase tracking-tight`}>{entry.subject}</p>
+        <div className="flex items-center gap-2 mt-0.5">
+          <span className="text-[9px] font-medium text-slate-500 dark:text-slate-400 tabular-nums">{entry.time}</span>
           {height > 40 && entry.room && (
-            <span className="text-[9px] font-black text-rose-900/40 dark:text-slate-600 uppercase tracking-[0.2em] truncate">• {entry.room}</span>
+            <span className="text-[9px] font-medium text-slate-400 dark:text-slate-500 truncate">• {entry.room}</span>
           )}
         </div>
       </div>
     </div>
   );
 };
+
 
 // ─── Weekly Timeline View ───────────────────────────────────────────────────
 const WeeklyTimeline: React.FC<{
@@ -324,22 +305,21 @@ const WeeklyTimeline: React.FC<{
     : -1;
 
   return (
-    <div className="rounded-[3.5rem] border-2 border-rose-100 dark:border-white/5 bg-white/40 dark:bg-slate-900/40 overflow-hidden shadow-2xl shadow-rose-900/5 backdrop-blur-2xl">
+    <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-xl shadow-slate-200/60 dark:shadow-none">
       {/* Day header */}
-      <div className="flex border-b-2 border-rose-100 dark:border-indigo-500/20 bg-rose-50/30 dark:bg-slate-900/20">
-        <div className="w-20 flex-shrink-0 border-r-2 border-rose-100 dark:border-indigo-500/20 p-5 flex items-center justify-center">
-          <Clock className="w-5 h-5 text-rose-400 dark:text-slate-700" />
+      <div className="flex border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+        <div className="w-16 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 p-4 flex items-center justify-center">
+          <Clock className="w-4 h-4 text-slate-400" />
         </div>
         {visibleDays.map((day, i) => {
           const count = byDay[day]?.length ?? 0;
           const isToday = day === currentDay;
           return (
-            <div key={day} className={`flex-1 min-w-[140px] text-center py-3.5 border-r border-rose-100 dark:border-white/5 last:border-r-0 ${isToday ? 'bg-rose-500/5 dark:bg-white/[0.02]' : ''}`}>
-              <p className={`text-[12px] font-black uppercase tracking-[0.2em] ${isToday ? 'text-rose-600 dark:text-indigo-400' : 'text-rose-900 dark:text-slate-300'}`}>
+            <div key={day} className={`flex-1 min-w-[120px] text-center py-4 border-r border-slate-200 dark:border-slate-800 last:border-r-0 ${isToday ? 'bg-indigo-500/5 dark:bg-indigo-500/10' : ''}`}>
+              <p className={`text-[11px] font-bold uppercase tracking-widest ${isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`}>
                 {day.substring(0, 3)}
-                {isToday && <span className="ml-2 w-2 h-2 rounded-full bg-rose-500 dark:bg-indigo-500 inline-block animate-pulse" />}
               </p>
-              {count > 0 && <p className="text-[9px] font-black text-rose-700/30 dark:text-slate-600 mt-1.5 uppercase tracking-widest">{count} Class{count !== 1 ? 'es' : ''}</p>}
+              {count > 0 && <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-1 uppercase tracking-tight">{count} Classes</p>}
             </div>
           );
         })}
@@ -349,12 +329,12 @@ const WeeklyTimeline: React.FC<{
       <div className="overflow-y-auto custom-scrollbar" style={{ maxHeight: '650px' }}>
         <div className="flex relative">
           {/* Time axis */}
-          <div className="w-20 flex-shrink-0 border-r-2 border-rose-100 dark:border-indigo-500/20 relative bg-rose-50/20 dark:bg-slate-900/20" style={{ height: `${totalHeight}px` }}>
+          <div className="w-16 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 relative bg-slate-50/50 dark:bg-slate-800/20" style={{ height: `${totalHeight}px` }}>
             {Array.from({ length: hourCount }, (_, i) => {
               const hour = TIMELINE_START_HOUR + i;
               return (
-                <div key={hour} className="absolute w-full flex items-start justify-center pt-2 border-b border-rose-100/40 dark:border-white/5" style={{ top: `${i * TIMELINE_HOUR_PX}px`, height: `${TIMELINE_HOUR_PX}px` }}>
-                  <span className="text-[10px] font-black text-rose-800/30 dark:text-slate-600 tabular-nums uppercase tracking-tight">{String(hour).padStart(2, '0')}:00</span>
+                <div key={hour} className="absolute w-full flex items-start justify-center pt-2 border-b border-slate-100 dark:border-slate-800/50" style={{ top: `${i * TIMELINE_HOUR_PX}px`, height: `${TIMELINE_HOUR_PX}px` }}>
+                  <span className="text-[10px] font-bold text-slate-400 tabular-nums uppercase tracking-tighter">{String(hour).padStart(2, '0')}:00</span>
                 </div>
               );
             })}
@@ -364,18 +344,18 @@ const WeeklyTimeline: React.FC<{
           {visibleDays.map((day, i) => {
             const isToday = day === currentDay;
             return (
-              <div key={day} className={`flex-1 min-w-[140px] relative border-r border-rose-100 dark:border-white/5 last:border-r-0 ${isToday ? 'bg-rose-500/[0.02] dark:bg-indigo-500/[0.02]' : ''}`} style={{ height: `${totalHeight}px` }}>
+              <div key={day} className={`flex-1 min-w-[140px] relative border-r border-slate-200 dark:border-slate-800 last:border-r-0 ${isToday ? 'bg-indigo-500/[0.02] dark:bg-indigo-500/[0.02]' : ''}`} style={{ height: `${totalHeight}px` }}>
                 {/* Hour grid lines */}
                 {Array.from({ length: hourCount }, (_, j) => (
-                  <div key={j} className="absolute left-0 right-0 border-t border-rose-50 dark:border-indigo-500/[0.05]" style={{ top: `${j * TIMELINE_HOUR_PX}px` }} />
+                  <div key={j} className="absolute left-0 right-0 border-t border-slate-100 dark:border-slate-800/20" style={{ top: `${j * TIMELINE_HOUR_PX}px` }} />
                 ))}
                 
                 {/* Current time indicator */}
                 {isToday && currentTimeTop >= 0 && (
                   <div className="absolute left-0 right-0 z-20 pointer-events-none" style={{ top: `${currentTimeTop}px` }}>
                     <div className="flex items-center -translate-y-1/2">
-                      <div className="w-3 h-3 rounded-full bg-rose-500 dark:bg-indigo-500 shadow-lg shadow-rose-500/50 dark:shadow-blue-500/50 -ml-1.5" />
-                      <div className="flex-1 h-0.5 bg-gradient-to-r from-rose-500 to-transparent dark:from-blue-500 dark:to-transparent" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-indigo-600 dark:bg-indigo-500 shadow-lg shadow-indigo-500/50 -ml-1.25" />
+                      <div className="flex-1 h-px bg-indigo-600/30 dark:bg-indigo-500/30" />
                     </div>
                   </div>
                 )}
@@ -410,17 +390,17 @@ const AgendaView: React.FC<{
   }, [entries]);
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-10">
       {DAYS.map(day => {
         const dayEntries = byDay[day] || [];
         if (dayEntries.length === 0) return null;
         return (
-           <div key={day} className="space-y-6">
-            <h2 className="text-lg font-black text-rose-800 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-4">
-              <span className="w-12 h-1 bg-gradient-to-r from-rose-600 to-transparent dark:from-indigo-600 dark:to-transparent rounded-full" />
+           <div key={day} className="space-y-5">
+            <h2 className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-3">
+              <span className="w-8 h-px bg-slate-200 dark:bg-slate-800" />
               {day}
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {dayEntries.sort((a,b) => timeToMinutes(a.time) - timeToMinutes(b.time)).map(entry => (
                 <TimetableCard key={entry.id} entry={entry} onEdit={onEdit} onDelete={onDelete} onView={onView} isPending={pendingOperations.has(entry.id)} />
               ))}
@@ -441,55 +421,56 @@ const ViewDetailModal: React.FC<{
   canEdit: boolean;
 }> = ({ entry, onClose, onEdit, onDelete, canEdit }) => {
   const cfg = getType(entry.type);
-  const TIcon = cfg.icon; // Assuming TIcon is derived from cfg.icon
+  const Icon = cfg.icon;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-    <div className="absolute inset-0 bg-rose-950/20 dark:bg-black/60 backdrop-blur-sm" onClick={onClose} />
-    <div className="relative w-full max-w-2xl bg-white/90 dark:bg-slate-900/90 border-2 border-rose-100 dark:border-indigo-500/20 rounded-[3.5rem] shadow-2xl overflow-hidden backdrop-blur-2xl">
-      <div className={`h-28 flex items-center justify-between px-6 relative overflow-hidden ${cfg.solidBg}`}>
-        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,white,transparent)]" />
-        <div className="relative z-10 flex items-center gap-5">
-          <div className={`w-10 h-10 rounded-2xl bg-white shadow-xl flex items-center justify-center ${cfg.text}`}>
-            <TIcon className="w-7 h-7" />
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+        <div className={`h-32 flex items-center justify-between px-8 relative overflow-hidden ${cfg.bg}`}>
+          <div className="relative z-10 flex items-center gap-5">
+            <div className={`w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 shadow-lg flex items-center justify-center ${cfg.text} border ${cfg.border}`}>
+              <Icon className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white leading-tight uppercase tracking-tight">{entry.subject}</h2>
+              <p className={`text-xs font-semibold ${cfg.text} uppercase tracking-widest mt-0.5`}>{entry.type}</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-3xl font-black text-rose-950 dark:text-white uppercase tracking-tighter leading-none mb-1">{entry.subject}</h2>
-            <p className="text-[10px] font-black text-rose-800/40 dark:text-slate-600 uppercase tracking-widest">{entry.type} · Temporal Signature</p>
-          </div>
-        </div>
-        <button onClick={onClose} className="relative z-10 w-10 h-10 flex items-center justify-center rounded-2xl bg-white/50 hover:bg-white transition-all text-rose-950 shadow-sm"><X className="w-5 h-5" /></button>
-      </div>
-
-      <div className="p-6 space-y-6">
-        <div className="grid grid-cols-2 gap-5">
-          <InfoItem icon={Clock} label="Time" value={`${entry.time} (${entry.day})`} />
-          <InfoItem icon={MapPin} label="Location" value={entry.room} />
-          {entry.instructor && <InfoItem icon={User} label="Primary Facilitator" value={entry.instructor} />}
-          <InfoItem icon={Calendar} label="Status" value="Active Stream" />
+          <button onClick={onClose} className="relative z-10 w-10 h-10 flex items-center justify-center rounded-xl bg-white/20 hover:bg-white/40 dark:bg-black/20 dark:hover:bg-black/40 transition-all text-slate-900 dark:text-white"><X className="w-5 h-5" /></button>
         </div>
 
-        {entry.description && (
-          <div className="p-8 bg-rose-50/50 dark:bg-white/[0.02] border-2 border-rose-100 dark:border-white/5 rounded-[2.5rem]">
-            <p className="text-[10px] font-black text-rose-400 dark:text-slate-700 uppercase tracking-widest mb-3">Class Log</p>
-            <p className="text-sm font-bold text-rose-900/80 dark:text-slate-300 leading-relaxed uppercase tracking-tight">{entry.description}</p>
+        <div className="p-8 space-y-8">
+          <div className="grid grid-cols-2 gap-8">
+            <InfoItem icon={Clock} label="Time & Day" value={`${formatTime(entry.time)} • ${entry.day}`} />
+            <InfoItem icon={MapPin} label="Location" value={entry.room} />
+            {entry.instructor && <InfoItem icon={User} label="Instructor" value={entry.instructor} />}
+            <InfoItem icon={Calendar} label="Status" value="Scheduled" />
           </div>
-        )}
 
-        <div className="bg-rose-500/5 dark:bg-white/[0.02] p-6 rounded-3xl border border-rose-100/50 dark:border-white/5 flex items-center justify-between">
-          <EnrollmentBar current={entry.currentEnrollment || 0} max={entry.maxCapacity || 40} />
-          <div className="flex gap-4 ml-10">
-            {canEdit && (
-              <>
-                <button onClick={() => { onEdit(entry); onClose(); }} className="w-10 h-10 rounded-2xl border-2 border-rose-100 dark:border-indigo-500/20 flex items-center justify-center text-rose-600 dark:text-indigo-400 hover:bg-white dark:hover:bg-indigo-500/20 transition-all shadow-sm"><Edit className="w-5 h-5" /></button>
-                <button onClick={() => { if(confirm('Dissolve this session?')) { onDelete(entry); onClose(); } }} className="w-10 h-10 rounded-2xl border-2 border-red-100 dark:border-red-500/20 flex items-center justify-center text-red-500 hover:bg-red-50 transition-all shadow-sm"><Trash2 className="w-5 h-5" /></button>
-              </>
-            )}
+          {entry.description && (
+            <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+              <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Notes</p>
+              <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">{entry.description}</p>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-slate-800">
+            <div className="flex-1 max-w-[240px]">
+              <EnrollmentBar current={entry.currentEnrollment || 0} max={entry.maxCapacity || 40} />
+            </div>
+            <div className="flex gap-3">
+              {canEdit && (
+                <>
+                  <button onClick={() => { onEdit(entry); onClose(); }} className="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-600 transition-all shadow-sm"><Edit className="w-5 h-5" /></button>
+                  <button onClick={() => { if(confirm('Are you sure you want to delete this session?')) { onDelete(entry); onClose(); } }} className="w-10 h-10 rounded-xl border border-rose-100 dark:border-rose-900/30 flex items-center justify-center text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all shadow-sm"><Trash2 className="w-5 h-5" /></button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
   );
 };
 
@@ -512,66 +493,67 @@ const EntryFormModal: React.FC<{
   onClose: () => void;
   isSubmitting: boolean;
 }> = ({ editingEntry, formData, setFormData, onSubmit, onClose, isSubmitting }) => {
-  const cfg = getType(formData.type);
-
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-rose-950/20 dark:bg-black/80 backdrop-blur-sm" onClick={onClose} />
-      <form onSubmit={onSubmit} className="relative w-full max-w-2xl bg-white/95 dark:bg-slate-900/95 border-2 border-rose-100 dark:border-indigo-500/20 rounded-[3.5rem] shadow-2xl overflow-hidden backdrop-blur-2xl">
-        <div className="h-28 flex items-center justify-between px-6 border-b-2 border-rose-50 dark:border-white/5 bg-rose-50/30 dark:bg-slate-900/20">
+    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 animate-in fade-in duration-300">
+      <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onClick={onClose} />
+      <form onSubmit={onSubmit} className="relative w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+        <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-black text-rose-950 dark:text-slate-300 uppercase tracking-tighter leading-none mb-1">{editingEntry ? 'Edit Class' : 'New Class'}</h2>
-            <p className="text-[10px] font-black text-rose-800/40 dark:text-slate-600 uppercase tracking-widest">Class Details</p>
+            <h2 className="text-xl font-bold text-rose-950 dark:text-white uppercase tracking-tight">{editingEntry ? 'Edit Session' : 'Create New Session'}</h2>
+            <p className="text-xs text-rose-900/60 dark:text-slate-400 mt-1 font-medium">Enter the session details below.</p>
           </div>
-          <button type="button" onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-2xl bg-white/50 hover:bg-white transition-all text-rose-950 shadow-sm"><X className="w-5 h-5" /></button>
+          <button type="button" onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-all text-slate-500"><X className="w-4 h-4" /></button>
         </div>
 
-        <div className="p-6 grid grid-cols-2 gap-5 max-h-[70vh] overflow-y-auto custom-scrollbar">
-          <FormField label="Subject" required>
-            <input type="text" value={formData.subject} onChange={e => setFormData({ ...formData, subject: e.target.value })} className="w-full px-6 py-2.5 bg-rose-500/5 dark:bg-white/[0.02] border-2 border-rose-100 dark:border-white/5 rounded-2xl text-[11px] font-black uppercase tracking-widest text-rose-950 dark:text-slate-200 focus:border-rose-300 dark:focus:border-indigo-500/40 outline-none transition-all shadow-inner" placeholder="E.G. DATA STRUCTURES..." required />
-          </FormField>
-          <FormField label="Room" required>
-            <input type="text" value={formData.room} onChange={e => setFormData({ ...formData, room: e.target.value })} className="w-full px-6 py-2.5 bg-rose-500/5 dark:bg-white/[0.02] border-2 border-rose-100 dark:border-white/5 rounded-2xl text-[11px] font-black uppercase tracking-widest text-rose-950 dark:text-slate-200 focus:border-rose-300 dark:focus:border-indigo-500/40 outline-none transition-all shadow-inner" placeholder="E.G. HALL C-12..." required />
-          </FormField>
-          <FormField label="Day" required>
-            <select value={formData.day} onChange={e => setFormData({ ...formData, day: e.target.value })} className="w-full px-6 py-2.5 bg-rose-500/5 dark:bg-white/[0.02] border-2 border-rose-100 dark:border-white/5 rounded-2xl text-[11px] font-black uppercase tracking-widest text-rose-950 dark:text-slate-200 focus:border-rose-300 dark:focus:border-indigo-500/40 outline-none transition-all appearance-none shadow-inner" required>
-              {DAYS.map(d => <option key={d} value={d} className="bg-white dark:bg-slate-900">{d.toUpperCase()}</option>)}
-            </select>
-          </FormField>
-          <FormField label="Time" required>
-            <input type="time" value={formData.time} onChange={e => setFormData({ ...formData, time: e.target.value })} className="w-full px-6 py-2.5 bg-rose-500/5 dark:bg-white/[0.02] border-2 border-rose-100 dark:border-white/5 rounded-2xl text-[11px] font-black uppercase tracking-widest text-rose-950 dark:text-slate-200 focus:border-rose-300 dark:focus:border-indigo-500/40 outline-none transition-all shadow-inner" required />
-          </FormField>
-          <FormField label="Type" required>
-             <div className="flex flex-wrap gap-3">
+        <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Subject" required>
+              <input type="text" value={formData.subject} onChange={e => setFormData({ ...formData, subject: e.target.value })} className="w-full px-4 py-2.5 bg-rose-50/30 dark:bg-slate-800 border border-rose-100/50 dark:border-slate-700 rounded-xl text-sm font-medium outline-none focus:border-rose-500 dark:focus:border-indigo-500 transition-all" placeholder="e.g. Computer Networks" required />
+            </FormField>
+            <FormField label="Room / Hall" required>
+              <input type="text" value={formData.room} onChange={e => setFormData({ ...formData, room: e.target.value })} className="w-full px-4 py-2.5 bg-rose-50/30 dark:bg-slate-800 border border-rose-100/50 dark:border-slate-700 rounded-xl text-sm font-medium outline-none focus:border-rose-500 dark:focus:border-indigo-500 transition-all" placeholder="e.g. Room 302" required />
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField label="Day of Week" required>
+              <select value={formData.day} onChange={e => setFormData({ ...formData, day: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium outline-none focus:border-indigo-500 transition-all appearance-none" required>
+                {DAYS.map(d => <option key={d} value={d}>{d}</option>)}
+              </select>
+            </FormField>
+            <FormField label="Start Time" required>
+              <input type="time" value={formData.time} onChange={e => setFormData({ ...formData, time: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium outline-none focus:border-indigo-500 transition-all" required />
+            </FormField>
+          </div>
+
+          <FormField label="Session Type" required>
+             <div className="flex flex-wrap gap-2">
                 {TYPES.map(t => {
-                  const tc = getType(t);
                   const active = formData.type === t;
-                  const TIcon = tc.icon;
                   return (
                     <button key={t} type="button" onClick={() => setFormData({ ...formData, type: t })} disabled={isSubmitting}
-                      className={`px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border-2 transition-all duration-300 flex items-center gap-2 ${active ? `${tc.solidBg} ${tc.text} ${tc.border} shadow-lg shadow-rose-200/20 dark:shadow-indigo-900/40 transform scale-105` : 'bg-rose-500/5 dark:bg-white/[0.02] text-rose-700/40 dark:text-slate-600 border-rose-100 dark:border-white/5 hover:border-rose-300 dark:hover:border-indigo-500/40'}`}>
-                      <TIcon className="w-4 h-4" />
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${active ? 'bg-rose-600 dark:bg-indigo-600 border-rose-600 dark:border-indigo-600 text-white shadow-md' : 'bg-rose-50/30 dark:bg-slate-800 border-rose-100/50 dark:border-slate-700 text-rose-900/60 hover:border-rose-300'}`}>
                       {t}
                     </button>
                   );
                 })}
               </div>
           </FormField>
-          <FormField label="Instructor">
-            <input type="text" value={formData.instructor || ''} onChange={e => setFormData({ ...formData, instructor: e.target.value })} className="w-full px-6 py-2.5 bg-rose-500/5 dark:bg-white/[0.02] border-2 border-rose-100 dark:border-white/5 rounded-2xl text-[11px] font-black uppercase tracking-widest text-rose-950 dark:text-slate-200 focus:border-rose-300 dark:focus:border-indigo-500/40 outline-none transition-all shadow-inner" placeholder="DR. STARK..." />
+
+          <FormField label="Instructor Name">
+            <input type="text" value={formData.instructor || ''} onChange={e => setFormData({ ...formData, instructor: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium outline-none focus:border-indigo-500 transition-all" placeholder="e.g. Dr. Sarah Connor" />
           </FormField>
-          <div className="col-span-2">
-            <FormField label="Description">
-              <textarea value={formData.description || ''} onChange={e => setFormData({ ...formData, description: e.target.value })} className="w-full px-6 py-2.5 bg-rose-500/5 dark:bg-white/[0.02] border-2 border-rose-100 dark:border-white/5 rounded-2xl text-[11px] font-black uppercase tracking-widest text-rose-950 dark:text-slate-200 focus:border-rose-300 dark:focus:border-indigo-500/40 outline-none transition-all h-24 resize-none shadow-inner" placeholder="ADDITIONAL DATA..." />
-            </FormField>
-          </div>
+
+          <FormField label="Additional Notes">
+            <textarea value={formData.description || ''} onChange={e => setFormData({ ...formData, description: e.target.value })} className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium outline-none focus:border-indigo-500 transition-all h-24 resize-none" placeholder="Include any extra details about the class..." />
+          </FormField>
         </div>
 
-        <div className="p-6 border-t-2 border-rose-50 dark:border-white/5 flex justify-end gap-5 bg-rose-50/20 dark:bg-slate-900/20">
-          <button type="button" onClick={onClose} disabled={isSubmitting} className="px-6 py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-widest text-rose-800 dark:text-indigo-400 hover:bg-white dark:hover:bg-indigo-500/10 transition-all border-2 border-transparent">Cancel</button>
-          <button type="submit" disabled={isSubmitting} className="px-12 py-3.5 bg-gradient-to-r from-rose-600 to-pink-600 dark:from-indigo-600 dark:to-violet-700 hover:from-rose-500 hover:to-pink-500 text-white rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-rose-200 dark:shadow-indigo-900/40 flex items-center gap-4 disabled:opacity-50">
-            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />}
-            <span>{editingEntry ? 'Update Class' : 'Save Entry'}</span>
+        <div className="px-8 py-6 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 bg-slate-50/30 dark:bg-slate-800/20">
+          <button type="button" onClick={onClose} disabled={isSubmitting} className="px-4 py-2 rounded-xl text-sm font-bold text-rose-900/60 hover:text-rose-950 dark:hover:text-slate-300 transition-all">Cancel</button>
+          <button type="submit" disabled={isSubmitting} className="px-8 py-2.5 bg-rose-600 dark:bg-indigo-600 hover:bg-rose-700 dark:hover:bg-indigo-700 text-white rounded-xl text-sm font-bold transition-all shadow-lg flex items-center gap-2 disabled:opacity-50">
+            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+            <span>{editingEntry ? 'Save Changes' : 'Create Session'}</span>
           </button>
         </div>
       </form>
@@ -778,18 +760,15 @@ export const Timetable: React.FC = () => {
 
   if (loading && timetable.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 gap-5">
-        <div className="relative">
-          <div className="w-16 h-16 border-4 border-rose-200 border-t-rose-600 rounded-full animate-spin" />
-          <Loader2 className="w-5 h-5 animate-spin text-rose-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-        </div>
-        <p className="text-rose-800 dark:text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] animate-pulse">Loading...</p>
+      <div className="flex flex-col items-center justify-center h-full min-h-[400px] space-y-4">
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-rose-500 dark:border-indigo-500" />
+        <p className="text-slate-500 dark:text-slate-400 animate-pulse text-xs font-medium tracking-widest uppercase">Loading Timetable Records</p>
       </div>
     );
   }
 
   return (
-    <div className="p-4 sm:p-5 max-w-full space-y-5">
+    <div className="p-0 max-w-full space-y-10">
 
       {/* ── Offline Banner ── */}
       {!isOnline && (
@@ -807,104 +786,58 @@ export const Timetable: React.FC = () => {
       )}
 
       {/* ── Header ── */}
-      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-5 mb-5">
-        <div className="flex-1">
-           <div className="flex items-center gap-5 mb-4">
-            <div className="w-16 h-16 rounded-[3rem] bg-gradient-to-br from-rose-500 to-pink-600 dark:from-indigo-600 dark:to-violet-700 flex items-center justify-center shadow-2xl shadow-rose-900/10 dark:shadow-indigo-900/40 p-1 ring-4 ring-rose-500/10 dark:ring-blue-500/10">
-               <div className="w-full h-full rounded-[2.8rem] border-2 border-white/40 flex items-center justify-center">
-                <CalendarRange className="w-10 h-10 text-white" />
-               </div>
-            </div>
-            <div>
-              <h1 className="text-4xl font-black text-rose-950 dark:text-slate-300 uppercase tracking-tighter leading-[0.85] mb-2">Timetable</h1>
-              <div className="flex items-center gap-3 text-[10px] font-black text-rose-600/40 dark:text-slate-600 uppercase tracking-[0.2em]">
-                <span className="flex items-center gap-1.5 bg-rose-500/5 dark:bg-indigo-500/10 px-3 py-1 rounded-lg border border-rose-500/10 dark:border-white/5">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                   System Online
-                </span>
-                <span>•</span>
-                <span className="text-rose-950 dark:text-slate-300">{stats.total} sessions synced</span>
-                <span>•</span>
-                <span className="text-rose-600 dark:text-slate-600">v2.4.0-STABLE</span>
-              </div>
-            </div>
-          </div>
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 pt-4">
+        <div>
+          <h1 className="text-3xl font-bold text-rose-950 dark:text-blue-300">
+            Timetable
+          </h1>
+          <p className="text-sm text-rose-900/60 dark:text-slate-400 mt-2 font-medium">Manage and view scheduled academic sessions.</p>
         </div>
 
-        <div className="flex flex-col items-end gap-3">
-          <div className="flex items-center gap-3">
-            <button onClick={() => loadTimetable()} disabled={loading} className="w-8 h-8 flex items-center justify-center bg-white/50 dark:bg-slate-800/50 border border-rose-100 dark:border-indigo-500/20 rounded-xl text-rose-600 dark:text-indigo-400 hover:bg-rose-50 dark:hover:bg-indigo-500/20 transition-all disabled:opacity-50 shadow-sm group" title="Refresh Schedule">
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
-            </button>
+        <div className="flex items-center gap-3">
+          <button onClick={() => loadTimetable()} disabled={loading} className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-rose-600 dark:hover:text-indigo-600 hover:bg-rose-50 dark:hover:bg-slate-800 transition-all disabled:opacity-50">
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+          
+          <div className="h-6 w-px bg-slate-200 dark:bg-slate-800" />
 
-            <div className="flex gap-1 bg-white/50 dark:bg-slate-800/50 border border-rose-100 dark:border-indigo-500/20 rounded-xl p-1 shadow-sm">
-              {(['pdf', 'excel'] as const).map(fmt => (
-                <button key={fmt} onClick={() => handleExport(fmt)} className="px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-[0.2em] text-rose-700/60 dark:text-indigo-400/60 hover:text-rose-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-indigo-500/20 transition-all">
-                  {fmt}
-                </button>
-              ))}
-            </div>
-
-            {(isTeacher() || isAdmin()) && (
-              <button onClick={handleAddEntry} className="px-4 py-2 bg-gradient-to-r from-rose-600 to-pink-600 dark:from-indigo-600 dark:to-violet-700 hover:from-rose-500 hover:to-pink-500 text-white rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all shadow-md flex items-center gap-2 group">
-                <Plus className="w-3.5 h-3.5 group-hover:rotate-90 transition-transform" />
-                <span>Add Class</span>
+          <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
+            {(['pdf', 'excel'] as const).map(fmt => (
+              <button key={fmt} onClick={() => handleExport(fmt)} className="px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 transition-all">
+                {fmt}
               </button>
-            )}
+            ))}
           </div>
 
-          <div className="flex flex-wrap items-center gap-4">
-             {Object.entries(stats.byType).filter(([type]) => type && type !== 'undefined').map(([type, count]) => {
-              const c = getType(type);
-              const TIcon = c.icon;
-              return (
-                <div key={type} className="bg-white/40 dark:bg-slate-900/40 px-6 py-3.5 rounded-[2.5rem] border border-rose-100 dark:border-white/5 backdrop-blur-xl shadow-xl shadow-rose-900/5 transition-all hover:-translate-y-2 group relative overflow-hidden">
-                   <div className="absolute top-0 right-0 w-20 h-20 bg-rose-500/5 dark:bg-white/[0.02] blur-2xl rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-700" />
-                   <div className="flex items-center gap-5 relative z-10">
-                    <div className={`w-10 h-10 ${c.bg} rounded-[1.25rem] flex items-center justify-center ${c.text} group-hover:scale-110 transition-transform border border-rose-500/10 dark:border-white/5`}>
-                      <TIcon className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-rose-700/40 dark:text-slate-600">{type}</p>
-                      <p className="text-xl font-black text-rose-950 dark:text-slate-300 tabular-nums leading-none mt-1">{count}</p>
-                    </div>
-                   </div>
-                </div>
-              );
-            })}
-          </div>
+          {(isTeacher() || isAdmin()) && (
+            <button onClick={handleAddEntry} className="px-5 py-2.5 bg-rose-600 dark:bg-indigo-600 hover:bg-rose-700 dark:hover:bg-indigo-700 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-rose-200 dark:shadow-indigo-900/20 flex items-center gap-2">
+              <Plus className="w-4 h-4" />
+              <span>Add Class</span>
+            </button>
+          )}
         </div>
       </div>
 
-      <div className="bg-white/40 dark:bg-slate-900/40 p-5 rounded-[3rem] border border-rose-100 dark:border-white/5 backdrop-blur-xl shadow-2xl shadow-rose-900/5 mb-4">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-          <div className="flex flex-col sm:flex-row items-center gap-5 flex-1">
-            <div className="relative w-full sm:w-96 group">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-rose-400 dark:text-slate-600 w-5 h-5 transition-all group-focus-within:text-rose-600 dark:group-focus-within:text-blue-400 group-focus-within:scale-110" />
-              <input
-                type="text"
-                placeholder="SEARCH CLASSES..."
-                value={searchTerm}
-                onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="w-full pl-16 pr-14 py-3.5 bg-rose-500/5 dark:bg-white/[0.02] border-2 border-rose-100 dark:border-white/5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] text-rose-950 dark:text-slate-200 placeholder:text-rose-200 dark:placeholder-slate-700 outline-none focus:border-rose-300 dark:focus:border-indigo-500/40 transition-all shadow-inner"
-              />
-              {searchTerm && (
-                <button onClick={() => setSearchTerm('')} className="absolute right-6 top-1/2 -translate-y-1/2 text-rose-300 hover:text-rose-600 transition-colors">
-                  <X className="w-5 h-5" />
-                </button>
-              )}
-            </div>
+      <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <div className="relative flex-1 group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Search sessions..."
+            value={searchTerm}
+            onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+            className="w-full pl-11 pr-10 py-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 rounded-2xl text-sm outline-none focus:border-rose-500 dark:focus:border-indigo-500 focus:ring-4 focus:ring-rose-500/5 dark:focus:ring-indigo-500/5 transition-all shadow-sm shadow-slate-200/50 dark:shadow-none"
+          />
+        </div>
 
-            <div className="flex items-center gap-2 p-2 bg-rose-500/5 dark:bg-white/[0.02] border border-rose-100 dark:border-white/5 rounded-[1.5rem]">
-              {([['grid', LayoutGrid, 'GRID'], ['timeline', CalendarRange, 'WEEK'], ['agenda', AlignLeft, 'LIST']] as const).map(([mode, Icon, label]) => (
-                <button key={mode} onClick={() => setViewMode(mode)}
-                  className={`flex items-center gap-3 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all ${viewMode === mode ? 'bg-gradient-to-r from-rose-600 to-pink-600 dark:from-indigo-600 dark:to-violet-700 text-white shadow-xl shadow-rose-200 dark:shadow-indigo-900/40 ring-1 ring-white/20' : 'text-rose-400 dark:text-slate-600 hover:text-rose-600 dark:hover:text-indigo-400 hover:bg-white/50 dark:hover:bg-white/5'}`}>
-                  <Icon className="w-4 h-4" />
-                  <span className="hidden sm:inline">{label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+        <div className="flex items-center gap-2 p-1 bg-slate-100/50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 backdrop-blur-sm">
+          {([['grid', LayoutGrid, 'Grid'], ['timeline', CalendarRange, 'Week'], ['agenda', AlignLeft, 'List']] as const).map(([mode, Icon, label]) => (
+            <button key={mode} onClick={() => setViewMode(mode)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${viewMode === mode ? 'bg-white dark:bg-slate-700 text-rose-600 dark:text-indigo-400 shadow-md shadow-slate-200/50 dark:shadow-none' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}>
+              <Icon className="w-4 h-4" />
+              <span>{label}</span>
+            </button>
+          ))}
         </div>
       </div>
 
@@ -924,24 +857,23 @@ export const Timetable: React.FC = () => {
       )}
 
       {/* ── Day + Type Filters ── */}
-      <div className="flex flex-col xl:flex-row gap-5">
-        <div className="flex items-center gap-2 p-2 bg-rose-500/5 dark:bg-white/[0.02] border-2 border-rose-100 dark:border-white/5 rounded-[2rem] overflow-x-auto scrollbar-none">
+      <div className="flex flex-col xl:flex-row gap-6 mb-8">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {['All', ...DAYS].map((d, i) => (
             <button key={d} onClick={() => { setFilterDay(d); setCurrentPage(1); }}
-              className={`flex-shrink-0 px-5 py-2.5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] transition-all ${filterDay === d ? 'bg-gradient-to-r from-rose-600 to-pink-600 dark:from-indigo-600 dark:to-violet-700 text-white shadow-xl shadow-rose-200 dark:shadow-indigo-900/40 transform scale-105' : 'text-rose-900/30 dark:text-slate-600 hover:text-rose-600 dark:hover:text-indigo-400'}`}>
-              {d === 'All' ? 'ALL DAYS' : DAYS_SHORT[i - 1]}
+              className={`flex-shrink-0 px-5 py-2 rounded-2xl text-[11px] font-bold uppercase tracking-wider border-2 transition-all ${filterDay === d ? 'bg-rose-600 dark:bg-indigo-600 border-rose-600 dark:border-indigo-600 text-white shadow-lg shadow-rose-200 dark:shadow-indigo-900/20' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-rose-900/40 dark:text-slate-500 hover:border-rose-300 dark:hover:border-slate-700'}`}>
+              {d === 'All' ? 'All Days' : DAYS_SHORT[i - 1]}
             </button>
           ))}
         </div>
 
-        <div className="flex items-center gap-2 p-2 bg-rose-500/5 dark:bg-white/[0.02] border-2 border-rose-100 dark:border-white/5 rounded-[2rem] overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {['All', ...TYPES].map(type => {
-            const cfg = type !== 'All' ? getType(type) : null;
             const active = filterType === type;
             return (
               <button key={type} onClick={() => { setFilterType(type); setCurrentPage(1); }}
-                className={`flex-shrink-0 px-5 py-2.5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] border-2 transition-all ${active && cfg ? `${cfg.solidBg} ${cfg.text} ${cfg.border} shadow-xl transform scale-105` : active ? 'bg-gradient-to-r from-rose-600 to-pink-600 dark:from-indigo-600 dark:to-violet-700 text-white shadow-xl shadow-rose-200 dark:shadow-indigo-900/40 transform scale-105' : 'text-rose-900/30 dark:text-slate-600 hover:text-rose-600 dark:hover:text-indigo-400 border-transparent'}`}>
-                {type === 'All' ? 'ALL TYPES' : type}
+                className={`flex-shrink-0 px-5 py-2 rounded-2xl text-[11px] font-bold uppercase tracking-wider border-2 transition-all ${active ? 'bg-rose-600 dark:bg-indigo-600 border-rose-600 dark:border-indigo-600 text-white shadow-lg shadow-rose-200 dark:shadow-indigo-900/20' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-rose-900/40 dark:text-slate-500 hover:border-rose-300 dark:hover:border-slate-700'}`}>
+                {type}
               </button>
             );
           })}
@@ -1019,24 +951,23 @@ const Chip: React.FC<{ label: string; onRemove: () => void; color: 'rose' | 'amb
 };
 
 const EmptyState: React.FC<{ hasFilters: boolean; onReset: () => void; onAdd: () => void; canAdd: boolean }> = ({ hasFilters, onReset, onAdd, canAdd }) => (
-  <div className="flex flex-col items-center justify-center py-32 px-6 text-center bg-rose-500/5 dark:bg-white/[0.02] border-2 border-dashed border-rose-200 dark:border-indigo-500/20 rounded-[4rem] backdrop-blur-xl relative overflow-hidden">
-    <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,rose,transparent)] dark:bg-[radial-gradient(circle_at_center,blue,transparent)]" />
-    <div className="w-28 h-28 rounded-[2.5rem] bg-white dark:bg-indigo-900/20 border-2 border-rose-100 dark:border-indigo-500/20 flex items-center justify-center mb-4 shadow-2xl shadow-rose-900/5 relative z-10">
-      <CalendarRange className="w-10 h-10 text-rose-600 dark:text-indigo-400" />
+  <div className="flex flex-col items-center justify-center py-20 px-6 text-center bg-slate-50 dark:bg-slate-800/20 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl group">
+    <div className="w-20 h-20 rounded-2xl bg-white/50 dark:bg-slate-800 border border-slate-200/50 dark:border-slate-700 flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform">
+      <CalendarRange className="w-8 h-8 text-rose-600 dark:text-indigo-500" />
     </div>
-    <h3 className="text-4xl font-black text-rose-950 dark:text-slate-300 mb-4 uppercase tracking-tighter relative z-10">
-      {hasFilters ? 'No Classes Found' : 'No Classes Scheduled'}
+    <h3 className="text-xl font-bold text-rose-950 dark:text-white mb-2 uppercase tracking-tight">
+      {hasFilters ? 'No Results Found' : 'Schedule is Empty'}
     </h3>
-    <p className="text-[11px] font-black text-rose-800/30 dark:text-slate-600 mb-5 max-w-sm uppercase tracking-[0.2em] leading-relaxed relative z-10">
+    <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 max-w-sm font-medium">
       {hasFilters 
-        ? "Try adjusting your search or filters to see more results." 
-        : "Get started by adding your first class to the timetable."}
+        ? "We couldn't find any classes matching your criteria. Try adjusting your filters." 
+        : "There are no academic sessions scheduled at the moment."}
     </p>
-    <div className="flex gap-5 relative z-10">
+    <div className="flex gap-4">
       {hasFilters && (
         <button 
           onClick={onReset} 
-          className="px-6 py-3.5 rounded-[1.2rem] bg-rose-50 dark:bg-indigo-500/10 border-2 border-rose-100 dark:border-indigo-500/20 text-rose-800 dark:text-indigo-400 text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-white dark:hover:bg-indigo-500/20 shadow-sm"
+          className="px-6 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold hover:bg-white dark:hover:bg-slate-800 transition-all font-bold"
         >
           Clear Filters
         </button>
@@ -1044,14 +975,16 @@ const EmptyState: React.FC<{ hasFilters: boolean; onReset: () => void; onAdd: ()
       {canAdd && (
         <button 
           onClick={onAdd} 
-          className="px-12 py-3.5 rounded-[1.2rem] bg-gradient-to-r from-rose-600 to-pink-600 dark:from-indigo-600 dark:to-violet-700 hover:from-rose-500 hover:to-pink-500 text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all shadow-xl shadow-rose-200 dark:shadow-indigo-900/40"
+          className="px-8 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-200 dark:shadow-indigo-900/20 flex items-center gap-2"
         >
-          {hasFilters ? 'Add First Class' : 'Add Record'}
+          <Plus className="w-4 h-4" />
+          <span>Add Your First Class</span>
         </button>
       )}
     </div>
   </div>
 );
+
 
 const Pagination: React.FC<{ current: number; total: number; onChange: (p: number) => void; showing: { start: number; end: number; total: number } }> = ({ current, total, onChange, showing }) => {
   const pages = Array.from({ length: Math.min(5, total) }, (_, i) => {
@@ -1062,14 +995,14 @@ const Pagination: React.FC<{ current: number; total: number; onChange: (p: numbe
   });
 
   return (
-    <div className="mt-16 flex flex-col sm:flex-row justify-between items-center gap-5 p-8 bg-white/40 dark:bg-slate-900/40 border-2 border-rose-100 dark:border-white/5 rounded-[3rem] backdrop-blur-xl shadow-2xl shadow-rose-900/5">
-      <p className="text-[10px] font-black text-rose-900/30 dark:text-slate-600 uppercase tracking-[0.2em]">Class Cursor: {showing.start}–{showing.end} of {showing.total} Entities</p>
-      <div className="flex items-center gap-3">
-        <PagBtn onClick={() => onChange(current - 1)} disabled={current === 1}><ChevronLeft className="w-5 h-5" /></PagBtn>
+    <div className="mt-12 flex flex-col sm:flex-row justify-between items-center gap-4 p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm">
+      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Showing {showing.start}–{showing.end} of {showing.total} Classes</p>
+      <div className="flex items-center gap-2">
+        <PagBtn onClick={() => onChange(current - 1)} disabled={current === 1}><ChevronLeft className="w-4 h-4" /></PagBtn>
         {pages.map(p => (
           <PagBtn key={p} onClick={() => onChange(p)} active={current === p}>{p}</PagBtn>
         ))}
-        <PagBtn onClick={() => onChange(current + 1)} disabled={current === total}><ChevronRight className="w-5 h-5" /></PagBtn>
+        <PagBtn onClick={() => onChange(current + 1)} disabled={current === total}><ChevronRight className="w-4 h-4" /></PagBtn>
       </div>
     </div>
   );
@@ -1077,7 +1010,7 @@ const Pagination: React.FC<{ current: number; total: number; onChange: (p: numbe
 
 const PagBtn: React.FC<{ key?: React.Key; onClick: () => void; disabled?: boolean; active?: boolean; children: React.ReactNode }> = ({ onClick, disabled, active, children }) => (
   <button onClick={onClick} disabled={disabled}
-    className={`w-10 h-10 rounded-2xl text-[11px] font-black flex items-center justify-center transition-all border-2 ${active ? 'bg-gradient-to-r from-rose-600 to-pink-600 dark:from-indigo-600 dark:to-violet-700 text-white border-transparent shadow-xl shadow-rose-200 dark:shadow-indigo-900/40 scale-110 z-10' : 'bg-white dark:bg-white/[0.02] border-rose-100 dark:border-white/5 text-rose-900/40 dark:text-slate-600 hover:border-rose-400 dark:hover:border-indigo-400 hover:text-rose-600 dark:hover:text-indigo-400'} disabled:opacity-20 disabled:cursor-not-allowed`}>
+    className={`w-9 h-9 rounded-xl text-xs font-bold flex items-center justify-center transition-all border ${active ? 'bg-rose-600 dark:bg-indigo-600 border-rose-600 dark:border-indigo-600 text-white shadow-md scale-105' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 hover:border-rose-400 dark:hover:border-slate-500'} disabled:opacity-30 disabled:cursor-not-allowed`}>
     {children}
   </button>
 );
