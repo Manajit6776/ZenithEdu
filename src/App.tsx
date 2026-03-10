@@ -238,7 +238,10 @@ const AppLayout = () => {
     navigate(to);
     setSearchQuery('');
     setIsSearchOpen(false);
-    searchInputRef.current?.blur();
+    if (searchInputRef.current) {
+        searchInputRef.current.value = '';
+        searchInputRef.current.blur();
+    }
   }, [navigate]);
 
   const handleSearchKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -349,83 +352,12 @@ const AppLayout = () => {
         ))}
       </nav>
 
-      <div className={cn("p-3 border-t flex-shrink-0", theme === 'dark' ? "border-white/5" : "border-rose-200/50")}>
-        <div className="relative">
-          <button
-            onClick={() => setShowProfileMenu(!showProfileMenu)}
-            className={cn(
-              "flex items-center w-full p-2.5 rounded-xl transition-all border",
-              theme === 'dark'
-                ? "bg-white/5 hover:bg-white/10 border-white/8"
-                : "bg-rose-500/5 hover:bg-rose-100/60 border-rose-200/50",
-              isSidebarOpen || mobile ? "gap-3" : "justify-center"
-            )}
-          >
-            <div className="relative flex-shrink-0">
-              <div className={cn(
-                "w-8 h-8 rounded-full p-[1.5px]",
-                theme === 'dark' ? "bg-gradient-to-tr from-indigo-500 to-purple-500" : "bg-gradient-to-tr from-rose-500 to-pink-500"
-              )}>
-                <img
-                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name}`}
-                  alt=""
-                  className={cn("w-full h-full rounded-full", theme === 'dark' ? "bg-slate-900" : "bg-amber-50")}
-                />
-              </div>
-              <div className={cn("absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2", theme === 'dark' ? "border-slate-950" : "border-amber-50", badge.dot)} />
-            </div>
-            {(isSidebarOpen || mobile) && (
-              <>
-                <div className="flex-1 overflow-hidden text-left">
-                  <p className={cn("text-sm font-semibold truncate leading-tight", theme === 'dark' ? "text-white" : "text-rose-950")}>{user?.name}</p>
-                  <p className={cn("text-[11px] font-medium truncate", badge.color)}>{role}</p>
-                </div>
-                <ChevronDown className={cn("w-3.5 h-3.5 flex-shrink-0 transition-transform duration-200", theme === 'dark' ? "text-slate-500" : "text-rose-400", showProfileMenu && "rotate-180")} />
-              </>
-            )}
-          </button>
-
-          {showProfileMenu && (
-            <div className={cn(
-              "absolute bottom-full left-0 right-0 mb-2 rounded-xl border overflow-hidden shadow-2xl z-50",
-              theme === 'dark' ? "border-white/10 shadow-black/40 bg-slate-900" : "border-rose-200 shadow-rose-100/80 bg-amber-50"
-            )}>
-              <div className="p-1.5 space-y-0.5">
-                <Link
-                  to="/profile"
-                  onClick={() => setShowProfileMenu(false)}
-                  className={cn(
-                    "flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm transition-all text-left",
-                    theme === 'dark' ? "text-slate-300 hover:bg-white/5" : "text-rose-900 hover:bg-rose-100"
-                  )}
-                >
-                  <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0", theme === 'dark' ? "bg-indigo-500/10" : "bg-rose-500/10")}>
-                    <User className={cn("w-3.5 h-3.5", theme === 'dark' ? "text-indigo-400" : "text-rose-600")} />
-                  </div>
-                  <div className="text-left">
-                    <p className={cn("font-medium text-xs", theme === 'dark' ? "text-white" : "text-rose-950")}>Profile Settings</p>
-                    <p className={cn("text-[10px]", theme === 'dark' ? "text-slate-500" : "text-rose-700/60")}>Manage your account</p>
-                  </div>
-                </Link>
-                <div className={cn("h-px mx-1", theme === 'dark' ? "bg-white/8" : "bg-rose-200/60")} />
-                <button
-                  onClick={() => { logout(); setShowProfileMenu(false); }}
-                  className={cn(
-                    "flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm transition-all",
-                    theme === 'dark' ? "text-rose-400 hover:bg-rose-500/10" : "text-rose-600 hover:bg-rose-100"
-                  )}
-                >
-                  <div className="w-7 h-7 rounded-lg bg-rose-500/10 flex items-center justify-center flex-shrink-0">
-                    <LogOut className="w-3.5 h-3.5 text-rose-500" />
-                  </div>
-                  <div className="text-left">
-                    <p className={cn("font-medium text-xs", theme === 'dark' ? "text-rose-300" : "text-rose-700")}>Sign Out</p>
-                    <p className={cn("text-[10px]", theme === 'dark' ? "text-slate-500" : "text-rose-700/60")}>Log out of your account</p>
-                  </div>
-                </button>
-              </div>
-            </div>
-          )}
+      <div className={cn("p-4 border-t flex-shrink-0", theme === 'dark' ? "border-white/5" : "border-rose-200/50")}>
+        <div className="flex items-center justify-center">
+          <div className={cn(
+            "w-2 h-2 rounded-full",
+            user ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.6)] animate-pulse" : "bg-slate-500"
+          )} />
         </div>
       </div>
     </>
@@ -460,7 +392,7 @@ const AppLayout = () => {
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <header className={cn(
-          "h-16 border-b backdrop-blur-md flex items-center justify-between px-4 md:px-6 z-10 flex-shrink-0",
+          "h-16 border-b backdrop-blur-md flex items-center justify-between px-4 md:px-6 z-[60] flex-shrink-0 sticky top-0",
           theme === 'dark' ? "border-white/5 bg-slate-950/50" : "border-rose-200/50 bg-amber-50/80"
         )}>
           <div className="flex items-center gap-3">
@@ -484,7 +416,13 @@ const AppLayout = () => {
               <Menu className="w-4 h-4" />
             </button>
 
-            <div className="relative group hidden sm:block" ref={searchRef}>
+            <div className="relative group hidden sm:block z-[70]" ref={searchRef}>
+              {isSearchOpen && searchQuery.trim() && (
+                <div 
+                  className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-[-1] transition-opacity duration-300"
+                  onClick={() => setIsSearchOpen(false)}
+                />
+              )}
               <Search className={cn(
                 "absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 transition-colors pointer-events-none z-10",
                 theme === 'dark' ? "text-slate-500 group-focus-within:text-indigo-400" : "text-rose-400 group-focus-within:text-rose-600"
@@ -519,10 +457,10 @@ const AppLayout = () => {
               {/* Search Results Dropdown */}
               {isSearchOpen && searchQuery.trim() && (
                 <div className={cn(
-                  "absolute top-full left-0 mt-2 w-72 rounded-xl border overflow-hidden shadow-2xl z-50",
+                  "absolute top-full left-0 mt-3 w-[400px] rounded-2xl border overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] z-[100] animate-in fade-in zoom-in-95 duration-200",
                   theme === 'dark'
-                    ? "border-indigo-500/20 bg-slate-900/95 backdrop-blur-xl shadow-black/60"
-                    : "border-rose-200 bg-white/95 backdrop-blur-xl shadow-rose-100/80"
+                    ? "border-indigo-500/30 bg-slate-900 shadow-black/60"
+                    : "border-rose-200 bg-white shadow-rose-200/50"
                 )}>
                   {searchResults.length > 0 ? (
                     <div className="py-1.5 max-h-[320px] overflow-y-auto custom-scrollbar">
@@ -538,17 +476,21 @@ const AppLayout = () => {
                         return (
                           <button
                             key={item.to}
-                            onClick={() => handleSearchNav(item.to)}
+                            onMouseDown={(e) => {
+                                e.preventDefault();
+                                handleSearchNav(item.to);
+                            }}
                             onMouseEnter={() => setSearchHighlightIndex(idx)}
                             className={cn(
-                              "flex items-center gap-3 w-full px-3 py-2 text-left transition-all",
+                              "flex items-center gap-4 w-full px-4 py-3 text-left transition-all border-b last:border-0",
+                              theme === 'dark' ? "border-white/5" : "border-rose-50",
                               isHighlighted
                                 ? theme === 'dark'
-                                  ? "bg-indigo-500/15"
-                                  : "bg-rose-100/70"
+                                  ? "bg-indigo-500/20"
+                                  : "bg-rose-100/80"
                                 : theme === 'dark'
                                   ? "hover:bg-white/5"
-                                  : "hover:bg-rose-50"
+                                  : "hover:bg-rose-50/50"
                             )}
                           >
                             <div className={cn(
@@ -653,10 +595,13 @@ const AppLayout = () => {
 
               {showNotifications && (
                 <>
-                  <div className="fixed inset-0 z-50" onClick={() => setShowNotifications(false)} />
+                  <div 
+                    className="fixed inset-0 bg-slate-950/20 backdrop-blur-[2px] z-[90] transition-opacity duration-300" 
+                    onClick={() => setShowNotifications(false)} 
+                  />
                   <div className={cn(
-                    "absolute right-0 top-full mt-2 w-80 rounded-xl z-50 overflow-hidden border shadow-2xl",
-                    theme === 'dark' ? "border-indigo-500/30 bg-[#0f1325] shadow-black/60" : "border-rose-200 bg-amber-50 shadow-rose-100/80"
+                    "absolute right-0 top-full mt-3 w-[360px] rounded-2xl z-[110] overflow-hidden border shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200",
+                    theme === 'dark' ? "border-indigo-500/30 bg-slate-900 shadow-black/80" : "border-rose-200 bg-white shadow-rose-200/50"
                   )}>
                     <div className={cn("flex items-center justify-between px-4 py-3 border-b", theme === 'dark' ? "border-white/10" : "border-rose-200/60")}>
                       <div className="flex items-center gap-2">
@@ -682,14 +627,20 @@ const AppLayout = () => {
                           { icon: '📚', title: 'Assignment due', desc: 'Data Structures', time: '1h', unread: true },
                         ]
                       ).map((n, i) => (
-                        <div key={i} className={cn("flex items-start gap-3 px-3 py-2 rounded-lg cursor-pointer transition-all", theme === 'dark' ? "hover:bg-white/5" : "hover:bg-rose-100/50")}>
-                          <span className="text-lg">{n.icon}</span>
+                        <button 
+                          key={i} 
+                          className={cn(
+                            "flex items-start gap-4 w-full px-4 py-3 rounded-xl transition-all text-left group",
+                            theme === 'dark' ? "hover:bg-white/5" : "hover:bg-rose-50"
+                          )}
+                        >
+                          <span className="text-xl bg-slate-100 dark:bg-white/5 w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">{n.icon}</span>
                           <div className="flex-1 min-w-0">
-                            <p className={cn("text-sm font-medium truncate", theme === 'dark' ? "text-white" : "text-rose-950")}>{n.title}</p>
-                            <p className={cn("text-xs", theme === 'dark' ? "text-slate-400" : "text-rose-700/60")}>{n.desc} • {n.time}</p>
+                            <p className={cn("text-sm font-semibold truncate", theme === 'dark' ? "text-white" : "text-rose-950")}>{n.title}</p>
+                            <p className={cn("text-xs leading-relaxed", theme === 'dark' ? "text-slate-400" : "text-rose-700/60")}>{n.desc} • {n.time}</p>
                           </div>
-                          {n.unread && <div className={cn("w-2 h-2 rounded-full mt-1", theme === 'dark' ? "bg-indigo-500" : "bg-rose-500")} />}
-                        </div>
+                          {n.unread && <div className={cn("w-2 h-2 rounded-full mt-1.5", theme === 'dark' ? "bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]" : "bg-rose-500")} />}
+                        </button>
                       ))}
                     </div>
 
@@ -709,15 +660,89 @@ const AppLayout = () => {
               )}
             </div>
 
-            <div className={cn(
-              "md:hidden w-8 h-8 rounded-full p-[1.5px] ml-1",
-              theme === 'dark' ? "bg-gradient-to-tr from-indigo-500 to-purple-500" : "bg-gradient-to-tr from-rose-500 to-pink-500"
-            )}>
-              <img
-                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name}`}
-                alt=""
-                className={cn("w-full h-full rounded-full", theme === 'dark' ? "bg-slate-900" : "bg-amber-50")}
-              />
+            {/* Profile Dropdown */}
+            <div className="relative ml-1">
+              <button
+                onClick={() => { setShowProfileMenu(!showProfileMenu); setShowNotifications(false); }}
+                className={cn(
+                  "flex items-center gap-2.5 p-1 pr-3 rounded-xl transition-all border",
+                  theme === 'dark'
+                    ? "bg-white/5 hover:bg-white/10 border-white/8"
+                    : "bg-rose-500/5 hover:bg-rose-100/60 border-rose-200/50"
+                )}
+              >
+                <div className="relative flex-shrink-0">
+                  <div className={cn(
+                    "w-8 h-8 rounded-full p-[1.5px]",
+                    theme === 'dark' ? "bg-gradient-to-tr from-indigo-500 to-purple-500" : "bg-gradient-to-tr from-rose-500 to-pink-500"
+                  )}>
+                    <img
+                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name}`}
+                      alt=""
+                      className={cn("w-full h-full rounded-full", theme === 'dark' ? "bg-slate-900" : "bg-amber-50")}
+                    />
+                  </div>
+                  <div className={cn("absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2", theme === 'dark' ? "border-slate-950" : "border-amber-50", badge.dot)} />
+                </div>
+                <div className="hidden lg:block text-left">
+                  <p className={cn("text-xs font-bold truncate leading-tight", theme === 'dark' ? "text-white" : "text-rose-950")}>{user?.name}</p>
+                  <p className={cn("text-[10px] font-medium opacity-60", badge.color)}>{role}</p>
+                </div>
+                <ChevronDown className={cn("hidden sm:block w-3.5 h-3.5 text-slate-500 transition-transform duration-200", showProfileMenu && "rotate-180")} />
+              </button>
+
+              {showProfileMenu && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-[120]" 
+                    onClick={() => setShowProfileMenu(false)} 
+                  />
+                  <div className={cn(
+                    "absolute right-0 top-full mt-3 w-64 rounded-2xl z-[130] overflow-hidden border shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200",
+                    theme === 'dark' ? "border-indigo-500/30 bg-slate-900 shadow-black/80" : "border-rose-200 bg-white shadow-rose-200/50"
+                  )}>
+                    <div className="p-2 space-y-1">
+                      <div className="px-3 py-2 border-b mb-1 dark:border-white/5 border-rose-100">
+                        <p className={cn("text-xs font-bold", theme === 'dark' ? "text-white" : "text-rose-950")}>{user?.name}</p>
+                        <p className={cn("text-[10px]", theme === 'dark' ? "text-slate-500" : "text-rose-500/60")}>{user?.email || 'Logged in'}</p>
+                      </div>
+                      
+                      <Link
+                        to="/profile"
+                        onClick={() => setShowProfileMenu(false)}
+                        className={cn(
+                          "flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm transition-all text-left group",
+                          theme === 'dark' ? "text-slate-300 hover:bg-white/5" : "text-rose-900 hover:bg-rose-50"
+                        )}
+                      >
+                        <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform", theme === 'dark' ? "bg-indigo-500/10" : "bg-rose-500/10")}>
+                          <User className={cn("w-4 h-4", theme === 'dark' ? "text-indigo-400" : "text-rose-600")} />
+                        </div>
+                        <div>
+                          <p className={cn("font-bold text-xs", theme === 'dark' ? "text-white" : "text-rose-950")}>Profile Settings</p>
+                          <p className={cn("text-[10px]", theme === 'dark' ? "text-slate-500" : "text-rose-700/60")}>Manage your account</p>
+                        </div>
+                      </Link>
+
+                      <button
+                        onClick={() => { logout(); setShowProfileMenu(false); }}
+                        className={cn(
+                          "flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm transition-all group",
+                          theme === 'dark' ? "text-rose-400 hover:bg-rose-500/10" : "text-rose-600 hover:bg-rose-50"
+                        )}
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                          <LogOut className="w-4 h-4 text-rose-500" />
+                        </div>
+                        <div>
+                          <p className={cn("font-bold text-xs", theme === 'dark' ? "text-rose-300" : "text-rose-700")}>Sign Out</p>
+                          <p className={cn("text-[10px]", theme === 'dark' ? "text-slate-500" : "text-rose-700/60")}>Log out of your account</p>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </header>
