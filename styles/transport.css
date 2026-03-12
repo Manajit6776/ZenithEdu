@@ -1,0 +1,272 @@
+/* Transport Component Styles */
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+.glass-panel {
+  background: rgba(225, 29, 72, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(225, 29, 72, 0.1);
+}
+
+.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bus-icon .bus-icon-top {
+  fill: #fb7185; /* rose-400 */
+}
+
+.bus-icon .bus-icon-body {
+  fill: #e11d48; /* rose-600 */
+}
+
+.dark .bus-icon .bus-icon-top {
+  fill: #818cf8; /* indigo-400 */
+}
+
+.dark .bus-icon .bus-icon-body {
+  fill: #4f46e5; /* indigo-600 */
+}
+
+.bus-icon-selected .bus-icon-top {
+  fill: #ffffff;
+}
+
+.bus-icon-selected .bus-icon-body {
+  fill: #e11d48;
+}
+
+.dark .bus-icon-selected .bus-icon-body {
+  fill: #6366f1;
+}
+
+.bus-icon-delayed .bus-icon-top {
+  fill: #f59e0b;
+}
+
+.bus-icon-delayed .bus-icon-body {
+  fill: #fbbf24;
+}
+
+.bus-marker-container {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.bus-marker-container:hover {
+  transform: scale(1.1);
+}
+
+.bus-marker-inner {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+
+.bus-icon-selected .bus-marker-inner {
+  width: 40px;
+  height: 40px;
+}
+
+.bus-icon-main {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.bus-icon-svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 4px 6px rgba(225, 29, 72, 0.2));
+}
+
+.dark .bus-icon-svg {
+  filter: drop-shadow(0 4px 6px rgba(99, 102, 241, 0.3));
+}
+
+.bus-route-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #e11d48;
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 5px;
+  border-radius: 6px;
+  border: 2px solid white;
+  min-width: 22px;
+  text-align: center;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dark .bus-route-badge {
+  background: #4f46e5;
+  border-color: #0f172a;
+}
+
+.bus-speed-badge {
+  position: absolute;
+  bottom: -6px;
+  left: -6px;
+  background: #10b981;
+  color: white;
+  font-size: 8px;
+  padding: 1px 3px;
+  border-radius: 3px;
+  border: 1.5px solid white;
+}
+
+.dark .bus-speed-badge {
+  border-color: #0f172a;
+}
+
+.bus-stop-container {
+  position: relative;
+}
+
+.bus-stop-circle {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.bus-stop-pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #e11d48;
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: pulse 2s infinite;
+}
+
+.dark .bus-stop-pulse {
+  background: #6366f1;
+}
+
+.bus-stop-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background: #e11d48;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.dark .bus-stop-center {
+  background: #6366f1;
+  border-color: #0f172a;
+}
+
+.bus-stop-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 800;
+  color: #e11d48;
+  background: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-top: 6px;
+  opacity: 0;
+  transition: all 0.3s;
+  pointer-events: none;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dark .bus-stop-label {
+  color: #818cf8;
+  background: #1e293b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.bus-stop-container:hover .bus-stop-label {
+  opacity: 1;
+  transform: translateX(-50%) translateY(2px);
+}
+
+.bus-popup .leaflet-popup-content-wrapper {
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(225, 29, 72, 0.1);
+  box-shadow: 0 10px 25px -5px rgba(225, 29, 72, 0.1);
+}
+
+.dark .bus-popup .leaflet-popup-content-wrapper {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.bus-popup .leaflet-popup-tip {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.dark .bus-popup .leaflet-popup-tip {
+  background: rgba(15, 23, 42, 0.9);
+}
+
+/* Performance optimizations */
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+  will-change: transform;
+}
+
+.leaflet-interactive {
+  cursor: pointer !important;
+}

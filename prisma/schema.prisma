@@ -1,0 +1,372 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id             String       @id @default(cuid())
+  name           String
+  email          String       @unique
+  role           UserRole
+  avatar         String
+  department     String?      @default("")
+  specialization String?      @default("")
+  experience     Int?         @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  assignments    Assignment[]
+  courses        Course[]
+  notices        Notice[]
+  student        Student?
+
+  @@map("users")
+}
+
+model Student {
+  id                     String          @id @default(cuid())
+  name                   String
+  rollNo                 String          @unique
+  department             String
+  attendance             Float           @default(0)
+  presentDays            Int             @default(0)
+  absentDays             Int             @default(0)
+  lateDays               Int             @default(0)
+  cgpa                   Float           @default(0)
+  feesStatus             FeesStatus      @default(Pending)
+  status                 StudentStatus   @default(Active)
+  userId                 String          @unique
+  overallAssignmentScore Float           @default(0)
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  attendanceRecords      Attendance[]
+  courses                CourseStudent[]
+  feeRecords             FeeRecord[]
+  user                   User            @relation(fields: [userId], references: [id])
+  submissions            Submission[]
+
+  @@map("students")
+}
+
+model Notice {
+  id         String   @id @default(cuid())
+  title      String
+  content    String
+  date       DateTime
+  priority   Priority @default(Medium)
+  author     String
+  authorId   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  authorUser User     @relation(fields: [authorId], references: [id])
+
+  @@map("notices")
+}
+
+model Course {
+  id             String          @id @default(cuid())
+  name           String
+  code           String          @unique
+  instructor     String
+  credits        Int
+  progress       Float           @default(0)
+  instructorId   String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  students       CourseStudent[]
+  instructorUser User            @relation(fields: [instructorId], references: [id])
+
+  @@map("courses")
+}
+
+model CourseStudent {
+  id         String   @id @default(cuid())
+  courseId   String
+  studentId  String
+  enrolledAt DateTime @default(now())
+  student    Student  @relation(fields: [studentId], references: [id])
+  course     Course   @relation(fields: [courseId], references: [id])
+
+  @@unique([courseId, studentId])
+  @@map("course_students")
+}
+
+model Book {
+  id        String     @id @default(cuid())
+  title     String
+  author    String
+  category  String
+  status    BookStatus @default(Available)
+  coverUrl  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  rating    Float?     @default(0)
+  views     Int?       @default(0)
+
+  @@map("books")
+}
+
+model HostelRoom {
+  id        String     @id @default(cuid())
+  number    String     @unique
+  type      RoomType   @default(Single)
+  capacity  Int
+  occupied  Int        @default(0)
+  floor     Int
+  status    RoomStatus @default(Available)
+  fee       Float
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("hostel_rooms")
+}
+
+model BusRoute {
+  id            String      @id @default(cuid())
+  routeNumber   String      @unique
+  destination   String
+  driver        String
+  departureTime String
+  status        RouteStatus @default(OnTime)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@map("bus_routes")
+}
+
+model FeeRecord {
+  id        String     @id @default(cuid())
+  type      String
+  amount    Float
+  dueDate   DateTime
+  status    FeesStatus @default(Pending)
+  invoiceId String     @unique
+  studentId String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  student   Student    @relation(fields: [studentId], references: [id])
+
+  @@map("fee_records")
+}
+
+model LiveClass {
+  id         String      @id @default(cuid())
+  subject    String
+  topic      String
+  instructor String
+  date       String?
+  startTime  String?
+  duration   String
+  status     ClassStatus @default(Upcoming)
+  platform   Platform    @default(Zoom)
+  meetingLink String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@map("live_classes")
+}
+
+model Attendance {
+  id              String           @id @default(cuid())
+  studentId       String
+  studentName     String
+  date            DateTime
+  status          AttendanceStatus @default(Present)
+  subject         String
+  markedBy        String
+  markedByTeacher String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  student         Student          @relation(fields: [studentId], references: [id])
+
+  @@map("attendance")
+}
+
+model Assignment {
+  id            String           @id @default(cuid())
+  title         String
+  description   String
+  subject       String
+  courseCode    String
+  dueDate       DateTime
+  maxScore      Float            @default(100)
+  type          AssignmentType   @default(Homework)
+  status        AssignmentStatus @default(Published)
+  teacherId     String
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  attachmentUrl String?
+  teacher       User             @relation(fields: [teacherId], references: [id])
+  submissions   Submission[]
+
+  @@map("assignments")
+}
+
+model Submission {
+  id            String           @id @default(cuid())
+  assignmentId  String
+  studentId     String
+  content       String
+  score         Float?
+  feedback      String?
+  status        SubmissionStatus @default(Submitted)
+  submittedAt   DateTime         @default(now())
+  gradedAt      DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  attachmentUrl String?
+  student       Student          @relation(fields: [studentId], references: [id])
+  assignment    Assignment       @relation(fields: [assignmentId], references: [id])
+
+  @@map("submissions")
+}
+
+model Appointment {
+  id          String            @id @default(cuid())
+  studentId   String
+  studentName String
+  teacherId   String
+  teacherName String
+  date        DateTime
+  time        String
+  duration    Int
+  subject     String
+  description String?
+  status      AppointmentStatus @default(Pending)
+  notes       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@map("appointments")
+}
+
+model TimeSlot {
+  id          String   @id @default(cuid())
+  teacherId   String
+  date        DateTime
+  startTime   String
+  endTime     String
+  isAvailable Boolean  @default(true)
+  duration    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("time_slots")
+}
+
+model Timetable {
+  id                String   @id @default(cuid())
+  day               String
+  time              String
+  subject           String
+  room              String
+  type              String   @default("Lecture")
+  instructor        String?
+  description       String?
+  duration          Int      @default(60)
+  maxCapacity       Int      @default(30)
+  currentEnrollment Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("timetable")
+}
+
+enum UserRole {
+  Admin
+  Teacher
+  Student
+  Parent
+}
+
+enum StudentStatus {
+  Active
+  Inactive
+}
+
+enum FeesStatus {
+  Paid
+  Pending
+  Overdue
+}
+
+enum Priority {
+  High
+  Medium
+  Low
+}
+
+enum BookStatus {
+  Available
+  Issued
+  Reserved
+}
+
+enum RoomType {
+  Single
+  Double
+  Shared
+}
+
+enum RoomStatus {
+  Available
+  Full
+  Maintenance
+}
+
+enum RouteStatus {
+  OnTime
+  Delayed
+  Departed
+}
+
+enum ClassStatus {
+  Live
+  Upcoming
+  Ended
+}
+
+enum Platform {
+  Zoom
+  GoogleMeet
+  MicrosoftTeams
+  Other
+}
+
+enum AttendanceStatus {
+  Present
+  Absent
+  Late
+}
+
+enum AssignmentType {
+  Homework
+  Quiz
+  Project
+  Exam
+  Lab
+}
+
+enum AssignmentStatus {
+  Draft
+  Published
+  Closed
+}
+
+enum SubmissionStatus {
+  Draft
+  Submitted
+  Graded
+  Returned
+}
+
+enum AppointmentStatus {
+  Pending
+  Approved
+  Rejected
+  Completed
+  Cancelled
+}
