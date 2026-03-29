@@ -1,0 +1,48 @@
+{
+  "name": "zenithedu-cms",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "server": "node server.js",
+    "ml": "cd ml-service && powershell -ExecutionPolicy Bypass -File start-ml.ps1",
+    "dev:all": "concurrently \"npm run dev\" \"npm run server\" \"npm run ml\"",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@google/genai": "^1.34.0",
+    "@prisma/client": "^6.19.1",
+    "@types/leaflet": "^1.9.21",
+    "clsx": "^2.1.1",
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "express": "^5.2.1",
+    "framer-motion": "^12.34.0",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^0.562.0",
+    "multer": "^2.0.2",
+    "ollama": "^0.6.3",
+    "prisma": "^6.19.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-hot-toast": "^2.6.0",
+    "react-leaflet": "^5.0.0",
+    "react-router-dom": "^7.11.0",
+    "recharts": "^3.7.0",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss": "^3.4.19"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.0.0",
+    "autoprefixer": "^10.4.23",
+    "concurrently": "^9.2.1",
+    "postcss": "^8.5.6",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}

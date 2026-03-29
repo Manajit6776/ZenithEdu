@@ -1,0 +1,7 @@
+{
+  "name": "ZenithEdu CMS",
+  "description": "A comprehensive, AI-powered College Management System featuring student/teacher records, academic management, and real-time analytics.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
